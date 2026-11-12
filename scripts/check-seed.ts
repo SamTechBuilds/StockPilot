@@ -1,0 +1,10 @@
+import {seed} from '../src/lib/seed';
+const s=seed();let bad=0;const f=(m:string)=>{bad++;console.log('FAIL',m)};
+console.log('products',s.products.length,'suppliers',s.suppliers.length,'customers',s.customers.length,'sales',s.sales.length,'movements',s.movements.length);
+if(s.products.length<30||s.suppliers.length<8||s.customers.length<15||s.sales.length<20)f('counts');
+if(new Set(s.products.map(p=>p.sku)).size!==s.products.length)f('dup sku');
+if(new Set(s.sales.map(x=>x.invoice)).size!==s.sales.length)f('dup invoice');
+s.sales.forEach(x=>{if(x.items.reduce((a,i)=>a+i.qty*i.price,0)-x.discount!==x.total)f('total '+x.invoice)});
+s.products.forEach(p=>{const m=s.movements.filter(x=>x.productId===p.id);const last=m.length?m[m.length-1].after:0;if(last!==p.qty)f('movement chain '+p.sku+` ${last}!=${p.qty}`);if(p.qty<0)f('neg')});
+console.log('out',s.products.filter(p=>p.qty===0).length,'low',s.products.filter(p=>p.qty>0&&p.qty<=p.min).length);
+console.log(bad?'FAILED':'SEED OK');process.exit(bad?1:0);

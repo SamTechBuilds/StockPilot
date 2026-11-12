@@ -1,0 +1,13 @@
+export type Product={id:string;name:string;sku:string;barcode:string;category:string;description:string;buy:number;sell:number;qty:number;min:number;supplierId:string;image:string};
+export type Supplier={id:string;name:string;contact:string;phone:string;email:string;address:string};
+export type Customer={id:string;name:string;phone:string;email:string};
+export type Method='Cash'|'UPI'|'Card'|'Other';
+export type PayStatus='Paid'|'Pending'|'Partially Paid';
+export type SaleItem={productId:string;name:string;qty:number;price:number;cost:number};
+export type Sale={id:string;invoice:string;date:string;customerId:string;customerName:string;customerPhone:string;items:SaleItem[];subtotal:number;discount:number;total:number;method:Method;status:PayStatus;paid:number};
+export type MoveType='in'|'out'|'adjust'|'sale';
+export type Movement={id:string;date:string;productId:string;type:MoveType;qty:number;before:number;after:number;reason:string};
+export type Settings={business:string;phone:string;email:string;address:string;currency:string;minDefault:number};
+export type State={products:Product[];suppliers:Supplier[];customers:Customer[];sales:Sale[];movements:Movement[];settings:Settings};
+export type Status='In Stock'|'Low Stock'|'Out of Stock';
+export const statusOf=(p:Product):Status=>p.qty<=0?'Out of Stock':p.qty<=p.min?'Low Stock':'In Stock';

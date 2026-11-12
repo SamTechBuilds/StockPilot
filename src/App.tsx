@@ -1,0 +1,13 @@
+import {useState} from 'react';
+import {BrowserRouter,Routes,Route,NavLink,Navigate} from 'react-router-dom';
+import {LayoutDashboard,Package,ArrowLeftRight,Receipt,Truck,Users,BarChart3,Settings,Menu,X} from 'lucide-react';
+import {Provider,useApp} from './lib/store';
+import Dashboard from './pages/Dashboard';import Products from './pages/Products';import Inventory from './pages/Inventory';import Sales from './pages/Sales';import {Suppliers,Customers} from './pages/People';import Reports from './pages/Reports';import SettingsPage from './pages/Settings';
+const NAV=[['/',LayoutDashboard,'Dashboard'],['/products',Package,'Products'],['/inventory',ArrowLeftRight,'Inventory'],['/sales',Receipt,'Sales'],['/suppliers',Truck,'Suppliers'],['/customers',Users,'Customers'],['/reports',BarChart3,'Reports'],['/settings',Settings,'Settings']] as const;
+function Shell(){const [o,setO]=useState(false);const {toasts,s}=useApp();
+ return <div className="min-h-screen md:flex"><div className="md:hidden no-print bg-navy-900 text-white flex items-center justify-between px-4 py-3"><b>StockPilot</b><button onClick={()=>setO(!o)} aria-label="Menu">{o?<X/>:<Menu/>}</button></div>
+ <aside className={`no-print bg-navy-900 text-slate-300 md:w-60 md:min-h-screen md:block ${o?'block':'hidden'} md:sticky md:top-0 md:h-screen shrink-0`}><div className="hidden md:block px-5 py-5 text-white text-lg font-bold">📦 StockPilot<div className="text-[11px] font-normal text-slate-400 truncate">{s.settings.business}</div></div>
+  <nav className="px-3 pb-3 space-y-1">{NAV.map(([to,I,l])=><NavLink key={to} to={to} end={to==='/'} onClick={()=>setO(false)} className={({isActive})=>`flex items-center gap-3 px-3 py-2 rounded-lg text-sm ${isActive?'bg-indigo-600 text-white':'hover:bg-navy-700'}`}><I size={18}/>{l}</NavLink>)}</nav></aside>
+ <main className="flex-1 p-3 md:p-6 min-w-0"><Routes><Route path="/" element={<Dashboard/>}/><Route path="/products" element={<Products/>}/><Route path="/inventory" element={<Inventory/>}/><Route path="/sales" element={<Sales/>}/><Route path="/suppliers" element={<Suppliers/>}/><Route path="/customers" element={<Customers/>}/><Route path="/reports" element={<Reports/>}/><Route path="/settings" element={<SettingsPage/>}/><Route path="*" element={<Navigate to="/"/>}/></Routes></main>
+ <div className="fixed bottom-4 right-4 z-[60] space-y-2 no-print">{toasts.map(t=><div key={t.id} className={`px-4 py-2 rounded-lg shadow text-sm text-white ${t.k==='err'?'bg-red-600':t.k==='warn'?'bg-amber-600':'bg-emerald-600'}`}>{t.m}</div>)}</div></div>}
+export default function App(){return <Provider><BrowserRouter><Shell/></BrowserRouter></Provider>}
